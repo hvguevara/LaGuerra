@@ -1,8 +1,8 @@
 #ifndef SPANISHDECK_H_
 #define SPANISHDECK_H_
 
-#include "Card.h"
-using TypeCard::Card;
+#include "Node.h"
+using TypeNode::Node;
 
 namespace TypeSpanishDeck{
 	struct SpanishDeck;
@@ -23,13 +23,35 @@ namespace TypeSpanishDeck{
 	//PostCondicion:
 	int DecideValue(int OrderCard);
 
+	//Pre:
+	//Pos:
+	int GetCountCard(SpanishDeck* deck);
+
+	//Pre:
+	//Pos:
+	Node* GetNode(SpanishDeck* deck, int position);
+
+	//Pre:
+	//Pos:
+	int SearchCard(SpanishDeck* deck, Node* card);
+
+	//Pre:
+	//Pos:
+	void Add(SpanishDeck* deck, Node* newCard);
+
+	//Pre:
+	//Pos:
+	void Remove(SpanishDeck* deck, Node* newCard);
+
 	//PreCondicion:
 	//PostCondicion:
 	void ViewDeck(SpanishDeck* deck);
 
 	//PreCondicion:
 	//PostCondicion:
-	void MixCard(SpanishDeck* deck);
+	SpanishDeck* MixCard(SpanishDeck* deck);
+
+	void DestroyDeck(SpanishDeck* deck);
 
 	//PreCondicion:
 	//PostCondicion:
@@ -45,6 +67,7 @@ namespace TypeSpanishDeck{
 		//PostCondicion:
 		void RepeatCard(SpanishDeck* deck,int origin, int destiny);
 	}
+
 }
 
 

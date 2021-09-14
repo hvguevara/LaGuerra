@@ -1,23 +1,23 @@
 #include <iostream>
 #include "SpanishDeck.h"
-#include "Card.h"
 #include "String.h"
 #include "Tools.h"
+#include "Node.h"
 
 using namespace TypeSpanishDeck;
-using namespace TypeSpanishDeck::TypePlayWar;
-using TypeCard::Card;
+using namespace TypeNode;
 using std::cout;
 using std::endl;
 
-typedef Card* Item;
+
+typedef Node* Item;
 #define ToExchange(itemA, itemB) {Item aux = itemA; itemA = itemB; itemB = aux;}
 
 const int topeDeck=50;
 const int topeTruco=40;
 
 struct TypeSpanishDeck::SpanishDeck{
-	Card* cards[topeDeck];
+	Node* cards[topeDeck];
 	int countCard;
 };
 
@@ -33,7 +33,7 @@ SpanishDeck* TypeSpanishDeck::CreateEmpty(){
 SpanishDeck* TypeSpanishDeck::Create(){
 	SpanishDeck* newDeck=CreateEmpty();
 	for(int index=0;index<topeDeck;index++){
-		newDeck->cards[index]= new Card(DecideSuit(index),DecideValue(index));
+		newDeck->cards[index]= TypeNode::Create(new Card(DecideSuit(index),DecideValue(index)));
 	}
 	newDeck->countCard=topeDeck;
 	return newDeck;
@@ -70,14 +70,46 @@ int TypeSpanishDeck::DecideValue(int OrderCard){
 	return OrderCard;
 }
 
+int TypeSpanishDeck::GetCountCard(SpanishDeck* deck){
+	return deck->countCard;
+}
+
+Node* TypeSpanishDeck::GetNode(SpanishDeck* deck, int position){
+	return deck->cards[position];
+}
+
+void TypeSpanishDeck::Add(SpanishDeck* deck, Node* newCard){
+	deck->cards[deck->countCard]=newCard;//new Card(Copy(newCard->GetSuit()),newCard->GetValue());
+	deck->countCard++;
+}
+
+void TypeSpanishDeck::Remove(SpanishDeck* deck, Node* removeCard){
+	int position=SearchCard(deck,removeCard);
+	if(position!=-1){
+		deck->cards[position]=NULL;
+		deck->countCard--;
+		for(int index=position;index<deck->countCard;index++){
+			deck->cards[position]=deck->cards[position+1];
+		}
+	}
+}
+
+int TypeSpanishDeck::SearchCard(SpanishDeck* deck, Node* card){
+	for(int index=0;index<deck->countCard;index++){
+		if(GetValues(deck->cards[index])==GetValues(card) and IsEqual(GetSuit(deck->cards[index]),GetSuit(card))){
+			return index;
+		}
+	}
+	return -1;
+}
 void TypeSpanishDeck::ViewDeck(SpanishDeck* deck){
 	for(int index=0; index<deck->countCard; index++){
-		deck->cards[index]->ViewCard();
+		View(deck->cards[index]);
 	}
 }
 
 
-void TypeSpanishDeck::MixCard(SpanishDeck* deck){
+SpanishDeck* TypeSpanishDeck::MixCard(SpanishDeck* deck){
 	int* position=Mix(deck->countCard);
 	for(int index=0;index<deck->countCard;index++){
 		if(position[index]!=-1){
@@ -85,11 +117,16 @@ void TypeSpanishDeck::MixCard(SpanishDeck* deck){
 			position[index]=-1;
 		}
 	}
+	return deck;
+}
+
+void TypeSpanishDeck::DestroyDeck(SpanishDeck* deck){
+	delete[] deck;
 }
 
 void TypeSpanishDeck::Destroy(SpanishDeck* deck){
 	for(int index=0;index<topeDeck and deck->cards[index]!=NULL;index++){
-		deck->cards[index]->~Card();
+		Destroy(deck->cards[index]);
 	}
 	delete[] deck;
 }

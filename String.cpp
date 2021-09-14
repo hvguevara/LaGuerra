@@ -22,3 +22,17 @@ int CountChar(char word[]){
 	}
 	return size;
 }
+
+bool IsEqual(char* origin, char* compare){
+	if(CountChar(origin)==CountChar(compare)){
+		for(int index=0;origin[index]!='\0' and compare[index]!='\0'; index++){
+			if(origin[index]!=compare[index]){
+				return false;
+			}
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}

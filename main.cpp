@@ -1,10 +1,13 @@
 #include <iostream>
 #include "SpanishDeck.h"
+#include "PlayWar.h"
 using namespace std;
 using namespace TypeSpanishDeck;
 using namespace TypeCheck;
+using namespace TypeGame;
 
 int main() {
+	/*
 	SpanishDeck* deck=Create();
 	ViewDeck(deck);
 	cout<<endl<<"ahora mezclar"<<endl;
@@ -23,6 +26,7 @@ int main() {
 	else{
 		cout<<"FFFF"<<endl;
 	}
-	ViewDeck(deck);
+	ViewDeck(deck);*/
+	Play();
 	return 0;
 }

@@ -13,5 +13,9 @@ char* Copy(char word[]);
 //PostCondicion:
 int CountChar(char word[]);
 
+//Pre:
+//Pos:
+bool IsEqual(char* origin, char* compare);
+
 
 #endif /* STRING_H_ */
