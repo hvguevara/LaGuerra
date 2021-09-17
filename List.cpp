@@ -44,10 +44,15 @@ void TypeList::Stack(List* list, Node* newNode){
 }
 
 Node* TypeList::UnStack(List* list){
-	Node* unStack=list->last;
-	list->last=GetPrevious(unStack);
-	list->countNode--;
-	return unStack;
+	if(list->last!=NULL){
+		Node* unStack=list->last;
+		list->last=GetPrevious(unStack);
+		list->countNode--;
+		return unStack;
+	}
+	else{
+		return NULL;
+	}
 }
 
 void TypeList::SetFirst(List* list, Node* newNode){
@@ -99,15 +104,18 @@ bool TypeList::IsEmpty(List* list){
 }
 
 List* TypeList::Concatenate(List* list, List* concatenate){
-	if(concatenate->countNode>0){
+	if(IsEmpty(list)==false and IsEmpty(concatenate)==false/*concatenate->countNode>0*/){
 		SetPrevious(concatenate->first, list->last);
 		list->last=concatenate->last;
 		list->countNode+=concatenate->countNode;
 	}
+	else if(IsEmpty(list)==true and IsEmpty(concatenate)==false){
+		SetReplaceList(list, concatenate);
+	}
 	return list;
 }
 
-void TypeList::DestroyList(List* list){
+void TypeList::DestroyOnlyList(List* list){
 	delete list;
 }
 

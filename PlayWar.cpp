@@ -261,7 +261,7 @@ void TypeGame::Round(List* playerOne, List* newOne, List* playerTwo, List* newTw
 	else{
 		List* tie=TypeList::CreateEmpty();
 		Tie(playerOne,newOne,playerTwo,newTwo,tie);
-		DestroyList(tie);
+		DestroyOnlyList(tie);
 		//Prueba(playerOne,playerTwo);
 	}
 	//cout<<"salio de Round"<<endl;
