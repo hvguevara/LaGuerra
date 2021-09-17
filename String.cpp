@@ -15,7 +15,7 @@ char* Copy(char word[]){
 	return newWord;
 }
 
-int CountChar(char word[]){
+int CountChar(char* word){
 	int size=0;
 	while(word[size]!='\0'){
 		size++;
