@@ -30,6 +30,18 @@ void Finish(List* playerWin,List* playerLose,List* newLose);
 //
 void RoundTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie);
 
+//
+//
+void Tie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie);
+
+//
+//
+void win(List* playerOne, List* playerTwo, List* newOne);
+
+//
+//
+int AddCountCard(List* deckOne, List* deckTwo);
+
 void OtraPrueba(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
 	cout<<"One("<<GetCountNode(playerOne)<<"+"<<GetCountNode(newOne)<<"): ";
 	GetCard(GetLast(playerOne))->ViewCard();
@@ -135,13 +147,12 @@ void TypeGame::TypeTry::Demo(SpanishDeck* deck, List* playerOne, List* playerTwo
 	List* newOne=TypeList::CreateEmpty();
 	List* newTwo=TypeList::CreateEmpty();
 	while(IsEmpty(playerOne)==false and IsEmpty(playerTwo)==false){
-		//Prueba(newOne,newTwo);
 		//cout<<round<<" ";
 		OtraPrueba(playerOne,newOne,playerTwo,newTwo);
 		Round(playerOne,newOne,playerTwo,newTwo);
 		DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
 		round++;
-		cout<<endl;
+		//cout<<endl;
 	}
 	cout<<"fin del juego"<<endl;
 	DecideWin(playerOne,newOne,playerTwo,newTwo);
@@ -160,14 +171,37 @@ void win(List* playerOne, List* playerTwo, List* newOne){
 	Stack(newOne,two);
 }
 
-int IsPossibleTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
-	if(GetCountNode(playerOne)+GetCountNode(newOne)>2 and GetCountNode(playerTwo)+GetCountNode(newTwo)>2 ){
-		return 0;
+int AddCountCard(List* deckOne, List* deckTwo){
+	if(GetCountNode(deckOne)>0){
+		if(GetCountNode(deckTwo)>0){
+			return GetCountNode(deckOne)+GetCountNode(deckTwo);
+		}
+		else{
+			return GetCountNode(deckOne);
+		}
 	}
-	else if(GetCountNode(playerOne)+GetCountNode(newOne)<3){
+	else{
+		if(GetCountNode(deckTwo)>0){
+			return GetCountNode(deckTwo);
+		}
+		else{
+			return 0;
+		}
+	}
+}
+
+int IsPossibleTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
+	cout<<"entro a IsPossibleTie"<<endl;
+	if(AddCountCard(playerOne,newOne)>2 and AddCountCard(playerTwo,newTwo)>2){
+		cout<<"salio IsPossibleTie 0"<<endl;
+		return 0;//
+	}
+	else if(AddCountCard(playerOne,newOne)>2 and AddCountCard(playerTwo,newTwo)<3){
+		cout<<"salio IsPossibleTie -1"<<endl;
 		return -1;
 	}
 	else{
+		cout<<"salio IsPossibleTie 1"<<endl;
 		return 1;
 	}
 }
@@ -187,18 +221,86 @@ void Finish(List* playerWin,List* playerLose,List* newLose){
 	}
 }
 
+void TypeGame::Round(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
+	//cout<<"entro a Round"<<endl;
+	int result=IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));
+	//WinRound(result);
+	if(result==1){
+		win(playerOne,playerTwo,newOne);
+	}
+	else if(result==-1){
+		win(playerTwo,playerOne,newTwo);
+	}
+	else{
+		List* tie=TypeList::CreateEmpty();
+		Tie(playerOne,newOne,playerTwo,newTwo,tie);
+		DestroyOnlyList(tie);
+		//Prueba(playerOne,playerTwo);
+	}
+	//cout<<"salio de Round"<<endl;
+}
+
 void RoundTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie){
 	DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
+	OtraPrueba(playerOne,newOne,playerTwo,newTwo);
 	win(playerTwo,playerOne,tie);
 	DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
+	OtraPrueba(playerOne,newOne,playerTwo,newTwo);
 	win(playerTwo,playerOne,tie);
+}
+
+void WinTie(List* playerWin, List* newWin, List* tie){
+
 }
 
 void Tie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie){
 	//cout<<"entro a Tie"<<endl;/*IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));OtraPrueba(playerOne,newOne,playerTwo,newTwo);*/OtraPrueba(playerOne,newOne,playerTwo,newTwo);
-	bool finish=false;
-	int result;
-	win(playerOne,playerTwo,newOne);
+	int result=0;
+	while(result==0){
+		cout<<"entro a tie"<<endl;
+		//Prueba(playerOne,playerTwo);
+		//Prueba(newOne,newTwo);
+		DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
+		result=IsPossibleTie(playerOne,newOne,playerTwo,newTwo);
+		if(result==1){
+			newOne=Concatenate(newOne, tie);
+			newOne=Concatenate(newOne, playerTwo);
+			newOne=Concatenate(newOne, newTwo);
+			Concatenate(playerOne, newOne);
+			SetToEmpty(playerTwo);
+			SetToEmpty(newTwo);
+			SetToEmpty(newOne);
+			//win(playerOne, playerTwo, newOne);
+		}
+		else if(result==-1){
+			newTwo=Concatenate(newTwo, tie);
+			newTwo=Concatenate(newTwo, playerOne);
+			newTwo=Concatenate(newTwo, newOne);
+			Concatenate(playerTwo, newTwo);
+			SetToEmpty(playerOne);
+			SetToEmpty(newOne);
+			SetToEmpty(newTwo);
+			//win(playerTwo, playerOne, newTwo);
+		}
+		else{
+			RoundTie(playerOne,newOne,playerTwo,newTwo,tie);
+			DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
+			result=IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));
+			if(result==1){
+				newOne=Concatenate(newOne, tie);
+				win(playerOne, playerTwo, newOne);
+			}
+			else if(result==-1){
+				newTwo=Concatenate(newTwo, tie);
+				win(playerTwo, playerOne, newTwo);
+			}
+			else{
+				OtraPrueba(playerOne,newOne,playerTwo,newTwo);
+				win(playerOne, playerTwo,tie);
+			}
+		}
+	}
+	cout<<"salio de tie"<<endl;
 	/*
 	while(finish!=true){
 		DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
@@ -232,7 +334,6 @@ void Tie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie)
 			cout<<"WIN TWO"<<endl;
 		}
 	}*/
-
 	//cout<<"Salio de Tie"<<endl;
 }
 
@@ -246,25 +347,6 @@ void WinRound(int result){
 	else{
 		//cout<<" TIE ";
 	}
-}
-
-void TypeGame::Round(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
-	//cout<<"entro a Round"<<endl;
-	int result=IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));
-	WinRound(result);
-	if(result==1){
-		win(playerOne,playerTwo,newOne);
-	}
-	else if(result==-1){
-		win(playerTwo,playerOne,newTwo);
-	}
-	else{
-		List* tie=TypeList::CreateEmpty();
-		Tie(playerOne,newOne,playerTwo,newTwo,tie);
-		DestroyOnlyList(tie);
-		//Prueba(playerOne,playerTwo);
-	}
-	//cout<<"salio de Round"<<endl;
 }
 
 void TypeGame::DecideWin(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
