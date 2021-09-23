@@ -7,16 +7,19 @@ namespace TypeList{
 
 	struct List;
 
-	//Pre: -
-	//Pos: Crea y devuelve una @List vacia.
+	/* Pre: -
+	 * Pos: Crea y devuelve una @List vacia.
+	 */
 	List* CreateEmpty();
 
-	//Pre: @newNode es un Node* valido
-	//Pos: Crea y devuelve una @List con lo contenido en @newNode
+	/* Pre: @newNode es un Node* valido
+	 * Pos: Crea y devuelve una @List con lo contenido en @newNode
+	 */
 	List* Create(Node* newNode);
 
-	//Pre: @list es una List* valida, @newNode es un Node* valido,
-	//Pos: si @newNode no esta vacio, apila en @list a @newNode. De lo contrario, no hace nada
+	/* Pre: @list es una List* valida, @newNode es un Node* valido
+	 * Pos: si @newNode no esta vacio, apila en @list a @newNode. De lo contrario, no hace nada
+	 */
 	void Stack(List* list, Node* newNode);
 
 	//Pre: @list es una List* valida

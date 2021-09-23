@@ -9,7 +9,6 @@ using namespace TypeNode;
 using std::cout;
 using std::endl;
 
-
 typedef Node* Item;
 #define ToExchange(itemA, itemB) {Item aux = itemA; itemA = itemB; itemB = aux;}
 
@@ -107,7 +106,6 @@ void TypeSpanishDeck::ViewDeck(SpanishDeck* deck){
 		View(deck->cards[index]);
 	}
 }
-
 
 SpanishDeck* TypeSpanishDeck::MixCard(SpanishDeck* deck){
 	int* position=Mix(deck->countCard);

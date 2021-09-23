@@ -26,6 +26,7 @@ int TypeCard::Card::GetValue(){
 }
 
 //
+
 int TypeCard::TypePlayWar::IsMajor(Card* origin, Card* compare){
 	if(origin->GetValue()==compare->GetValue()){
 		return 0;

@@ -1,7 +1,6 @@
 #include <iostream>
 #include "List.h"
 #include "Node.h"
-
 using std::endl;
 using std::cout;
 using TypeNode::Node;
@@ -40,7 +39,6 @@ void TypeList::Stack(List* list, Node* newNode){
 		}
 		list->countNode++;
 	}
-
 }
 
 Node* TypeList::UnStack(List* list){

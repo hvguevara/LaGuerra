@@ -7,8 +7,9 @@ namespace TypeNode{
 
 	struct Node;
 
-	//Pre: -
-	//Pos: Crea y devuelve un @Node* vacio
+	/* Pre: -
+	 * Pos: Crea y devuelve un @Node* vacio
+	 */
 	Node* CreateEmpty();
 
 	//Pre: @card es una Card* valida no vacia
@@ -42,11 +43,6 @@ namespace TypeNode{
 	//Pre: @node es un Node*
 	//Pos: libera todos los recursos utilizados por @node
 	void Destroy(Node* node);
-
-}
-
-namespace Pruebas{
-
 }
 
 #endif /* NODE_H_ */
