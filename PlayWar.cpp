@@ -14,33 +14,75 @@ using namespace TypeNode;
 using namespace TypeGame::TypeTry;
 using namespace TypeList;
 
-//Pre:
-//Post:
+/*Pre: @list es una List valida
+ * Post: Crea y retorna un @SpanishDeck con el contenido de @list en cada elemento
+ */
 SpanishDeck* AssembleDeck(List* list);
 
-//Pre:
-//Post:
+/*Pre:@playerOne representa el mazo y @newOne reprensenta el mazo de manos ganadas por @playerOne..
+ * .. @playerTwo representa el mazo y @newTwo  reprensenta el mazo de manos ganadas por @playerTwo, todo son List* validas
+ * Post: si la cantidad de elemento de @playerOne + @newOne es igual o menor que 2, devuelve -1..
+ * ..si la cantidad de elemento de @playerTwo + @newTwo es igual o menor que 2, devuelve 1 y..
+ * .. si tanto en @playerOne + @newOne como en @playerTwo + @newTwo hay 3 o mas elemento, devuelve 0
+ */
 int IsPossibleTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo);
 
-//
-//
+/*Pre: @playerWin representa un mazo, @playerLose representa un mazo y @newLose reprensenta el mazo..
+ * ..de manos ganadas por @playerLose, todas son @List validas
+ * Post: quita todos los elementos contenidos en  @playerLose y @newLose, y los agrega a @playerWin
+ */
 void Finish(List* playerWin,List* playerLose,List* newLose);
 
-//
-//
+/* Pre:@playerOne representa el mazo y @newOne reprensenta el mazo de manos ganadas por @playerOne..
+ * .. @playerTwo representa el mazo y @newTwo  reprensenta el mazo de manos ganadas por @playerTwo..
+ * ..@tie representa los elementos que se encuentran en round empate en juego..
+ * .. tanto la cantidad de elementos de @playerOne+@newOne como @playerTwo+@newTwo debe ser mayor a..
+ * ..3. todo son List* validas
+ * Post: realiza la accion comprendida en la situacion de empate en el juego de "la guerra"..
+ * ..quita los ultimos 2 elementos de @playerOne y @playerTwo y los agrega a @tie, si en algun..
+ * .. caso @playerOne y @playerTwo, mezclara el mazo de manos ganas correspondiente al jugar sin elementos..
+ * .. lo asignara nuevamente al mazo en juego y seguira con la accion
+ */
 void RoundTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie);
 
-//
-//
+/* Pre:@playerOne representa el mazo y @newOne reprensenta el mazo de manos ganadas por @playerOne..
+ * .. @playerTwo representa el mazo y @newTwo  reprensenta el mazo de manos ganadas por @playerTwo..
+ * ..@tie representa los elementos que se encuentran en round empate en juego..
+ * .. tanto la cantidad de elementos de @playerOne+@newOne como @playerTwo+@newTwo debe ser mayor a..
+ * ..3. todo son List* validas
+ * Post: realiza la accion comprendida en la situacion de empate en el juego de "la guerra"..
+ * .. se quitan las primeras dos cartas de las pilas @playerOne y @playerTwo, se las agrega a @tie, luego..
+ * .. se vuelve a quitar y comparar la primera carta de @playerOne y @playerTwo y el que tenga la..
+ * .. alta, se lleva esas dos, mas las cartas que se asignaron a @tie, si vuelve a ocurrir un empate..
+ * .. se vuelve a repetir el proceso hasta que haya un desempate, o hasta que uno de los @player se quede..
+ * .. sin cartas tanto el mazo principal como en el @new, en ese caso, automaticamente el que quede sin..
+ * .. cartas en ambos mazos, pierde el juego y se le asigna todas las cartas al ganador..
+ * .. Si en algun caso, @playerOne y/o @playerTwo se vacian, se mezclaran @newOne y/o @newTwo y se le..
+ * .. asignara a player que corresponda, si al comienzo de un empate alguno de los @player tiene..
+ * .. menos de 3 cartas en @player+@new, automaticamente pierde la partida y se le asignas todas las cartas..
+ * .. al otro @player.
+ */
 void Tie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie);
 
-//
-//
-void win(List* playerOne, List* playerTwo, List* newOne);
+/* Pre: @playerWin representa el mazo ganador y @newPlayerWin reprensenta el mazo de manos ganadas por..
+ * .. @playerWin. @playerLoser representa el mazo perdedor, todas son List* validas, tanto @playerWin..
+ * ..como @playerLoser deben tener, al menos 1 elemento.
+ * Post: Se quita de la pila @playerWin y @playerLoser el primer elemento y se las asigna a @newPlayerWin
+ */
+void RoundWin(List* playerWin, List* playerLoser, List* newPlayerWin);
 
-//
-//
-int AddCountCard(List* deckOne, List* deckTwo);
+/* Pre: @deckOne y @deckTwo reprensentan mazos de cartas, ambas son List* validas
+ * Post: suma y devuelve la cantidad de elementos(cartas) que contienen @deckOne y @deckTwo
+ */
+int CountCardPlayer(List* deckOne, List* deckTwo);
+
+/* Pre:@playerWin representa el mazo y @newWin reprensenta el mazo de manos ganadas por @playerWin..
+ * .. @playerLoser representa el mazo y @newLoser  reprensenta el mazo de manos ganadas por @playerLoser..
+ * ..@tie representa los elementos que se encuentran en round empate en juego. todas son List* validas
+ * Post: se quitan todos los elementos(cartas) de @playerLoser, @newLoser, @tie y @newWin y se los..
+ * .. asigna a @playerWin,
+ */
+void WinForTie(List* playerWin, List* newWin, List* playerLoser, List* newLoser,List* tie);
 
 void OtraPrueba(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
 	cout<<"One("<<GetCountNode(playerOne)<<"+"<<GetCountNode(newOne)<<"): ";
@@ -75,10 +117,7 @@ void TypeGame::Play(){
 	List* playerTwo=TypeList::CreateEmpty();
 	deck=MixCard(deck);
 	Distribute(deck, playerOne, playerTwo);
-	//cout<<"paso"<<endl;
-	//Prueba(playerOne,playerTwo);
 	TypeGame::TypeTry::Demo(deck,playerOne,playerTwo);
-	//TypeGame::TypeTry::Prueba(deck, playerOne,playerTwo);
 }
 
 void TypeGame::Distribute(SpanishDeck* deck, List* playerOne, List* playerTwo){
@@ -103,8 +142,6 @@ void TypeGame::ParserDeckInList(SpanishDeck* deck, List* player){
 }
 
 void ResetDeck(List* player, List* newPlayer){
-	//cout<<"entro a ResetDeck"<<endl;
-	Prueba(player,newPlayer);
 	SetReplaceList(player,newPlayer);
 	if(GetCountNode(newPlayer)>1){
 		SpanishDeck* newDeck=AssembleDeck(player);
@@ -113,8 +150,6 @@ void ResetDeck(List* player, List* newPlayer){
 		ParserDeckInList(newDeck,player);
 	}
 	SetToEmpty(newPlayer);
-	Prueba(player,newPlayer);
-	//cout<<"Salio de ReserDeck"<<endl;
 }
 
 SpanishDeck* AssembleDeck(List* list){
@@ -128,7 +163,6 @@ SpanishDeck* AssembleDeck(List* list){
 }
 
 void TypeGame::DecideResetDeck(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
-	//cout<<"entro a DecideResetDeck"<<endl;
 	if(GetCountNode(playerOne)==0 and GetCountNode(newOne)!=0 and GetCountNode(playerTwo)==0 and GetCountNode(newTwo)!=0){
 		ResetDeck(playerOne, newOne);
 		ResetDeck(playerTwo, newTwo);
@@ -139,7 +173,6 @@ void TypeGame::DecideResetDeck(List* playerOne, List* newOne, List* playerTwo, L
 	else if(GetCountNode(playerTwo)==0 and GetCountNode(newTwo)!=0){
 		ResetDeck(playerTwo, newTwo);
 	}
-	//cout<<"salio de DecideResetDeck"<<endl;
 }
 
 void TypeGame::TypeTry::Demo(SpanishDeck* deck, List* playerOne, List* playerTwo){
@@ -147,12 +180,10 @@ void TypeGame::TypeTry::Demo(SpanishDeck* deck, List* playerOne, List* playerTwo
 	List* newOne=TypeList::CreateEmpty();
 	List* newTwo=TypeList::CreateEmpty();
 	while(IsEmpty(playerOne)==false and IsEmpty(playerTwo)==false){
-		//cout<<round<<" ";
 		OtraPrueba(playerOne,newOne,playerTwo,newTwo);
 		Round(playerOne,newOne,playerTwo,newTwo);
 		DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
 		round++;
-		//cout<<endl;
 	}
 	cout<<"fin del juego"<<endl;
 	DecideWin(playerOne,newOne,playerTwo,newTwo);
@@ -162,16 +193,16 @@ void TypeGame::TypeTry::Demo(SpanishDeck* deck, List* playerOne, List* playerTwo
 //
 //
 
-void win(List* playerOne, List* playerTwo, List* newOne){
-	Node* one=UnStack(playerOne);
-	Node* two=UnStack(playerTwo);
+void RoundWin(List* playerWin, List* playerLoser, List* newPlayerWin){
+	Node* one=UnStack(playerWin);
+	Node* two=UnStack(playerLoser);
 	SetPrevious(one,NULL);
 	SetPrevious(two,NULL);
-	Stack(newOne,one);
-	Stack(newOne,two);
+	Stack(newPlayerWin,one);
+	Stack(newPlayerWin,two);
 }
 
-int AddCountCard(List* deckOne, List* deckTwo){
+int CountCardPlayer(List* deckOne, List* deckTwo){
 	if(GetCountNode(deckOne)>0){
 		if(GetCountNode(deckTwo)>0){
 			return GetCountNode(deckOne)+GetCountNode(deckTwo);
@@ -191,17 +222,13 @@ int AddCountCard(List* deckOne, List* deckTwo){
 }
 
 int IsPossibleTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
-	cout<<"entro a IsPossibleTie"<<endl;
-	if(AddCountCard(playerOne,newOne)>2 and AddCountCard(playerTwo,newTwo)>2){
-		cout<<"salio IsPossibleTie 0"<<endl;
-		return 0;//
+	if(CountCardPlayer(playerOne,newOne)>2 and CountCardPlayer(playerTwo,newTwo)>2){
+		return 0;
 	}
-	else if(AddCountCard(playerOne,newOne)>2 and AddCountCard(playerTwo,newTwo)<3){
-		cout<<"salio IsPossibleTie -1"<<endl;
+	else if(CountCardPlayer(playerOne,newOne)>2 and CountCardPlayer(playerTwo,newTwo)<3){
 		return -1;
 	}
 	else{
-		cout<<"salio IsPossibleTie 1"<<endl;
 		return 1;
 	}
 }
@@ -222,65 +249,50 @@ void Finish(List* playerWin,List* playerLose,List* newLose){
 }
 
 void TypeGame::Round(List* playerOne, List* newOne, List* playerTwo, List* newTwo){
-	//cout<<"entro a Round"<<endl;
 	int result=IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));
 	//WinRound(result);
 	if(result==1){
-		win(playerOne,playerTwo,newOne);
+		RoundWin(playerOne,playerTwo,newOne);
 	}
 	else if(result==-1){
-		win(playerTwo,playerOne,newTwo);
+		RoundWin(playerTwo,playerOne,newTwo);
 	}
 	else{
 		List* tie=TypeList::CreateEmpty();
 		Tie(playerOne,newOne,playerTwo,newTwo,tie);
 		DestroyOnlyList(tie);
-		//Prueba(playerOne,playerTwo);
 	}
-	//cout<<"salio de Round"<<endl;
 }
 
 void RoundTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie){
 	DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
 	OtraPrueba(playerOne,newOne,playerTwo,newTwo);
-	win(playerTwo,playerOne,tie);
+	RoundWin(playerTwo,playerOne,tie);
 	DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
 	OtraPrueba(playerOne,newOne,playerTwo,newTwo);
-	win(playerTwo,playerOne,tie);
+	RoundWin(playerTwo,playerOne,tie);
 }
 
-void WinTie(List* playerWin, List* newWin, List* tie){
-
+void WinForTie(List* playerWin, List* newWin, List* playerLoser, List* newLoser,List* tie){
+	newWin=Concatenate(newWin, tie);
+	newWin=Concatenate(newWin, playerLoser);
+	newWin=Concatenate(newWin, newLoser);
+	Concatenate(playerWin, newWin);
+	SetToEmpty(playerLoser);
+	SetToEmpty(newLoser);
+	SetToEmpty(newWin);
 }
 
 void Tie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie){
-	//cout<<"entro a Tie"<<endl;/*IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));OtraPrueba(playerOne,newOne,playerTwo,newTwo);*/OtraPrueba(playerOne,newOne,playerTwo,newTwo);
 	int result=0;
 	while(result==0){
-		cout<<"entro a tie"<<endl;
-		//Prueba(playerOne,playerTwo);
-		//Prueba(newOne,newTwo);
 		DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
 		result=IsPossibleTie(playerOne,newOne,playerTwo,newTwo);
 		if(result==1){
-			newOne=Concatenate(newOne, tie);
-			newOne=Concatenate(newOne, playerTwo);
-			newOne=Concatenate(newOne, newTwo);
-			Concatenate(playerOne, newOne);
-			SetToEmpty(playerTwo);
-			SetToEmpty(newTwo);
-			SetToEmpty(newOne);
-			//win(playerOne, playerTwo, newOne);
+			WinForTie(playerOne, newOne,playerTwo, newTwo, tie);
 		}
 		else if(result==-1){
-			newTwo=Concatenate(newTwo, tie);
-			newTwo=Concatenate(newTwo, playerOne);
-			newTwo=Concatenate(newTwo, newOne);
-			Concatenate(playerTwo, newTwo);
-			SetToEmpty(playerOne);
-			SetToEmpty(newOne);
-			SetToEmpty(newTwo);
-			//win(playerTwo, playerOne, newTwo);
+			WinForTie(playerTwo, newTwo,playerOne, newOne, tie);
 		}
 		else{
 			RoundTie(playerOne,newOne,playerTwo,newTwo,tie);
@@ -288,64 +300,29 @@ void Tie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List* tie)
 			result=IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));
 			if(result==1){
 				newOne=Concatenate(newOne, tie);
-				win(playerOne, playerTwo, newOne);
+				RoundWin(playerOne, playerTwo, newOne);
 			}
 			else if(result==-1){
 				newTwo=Concatenate(newTwo, tie);
-				win(playerTwo, playerOne, newTwo);
+				RoundWin(playerTwo, playerOne, newTwo);
 			}
 			else{
 				OtraPrueba(playerOne,newOne,playerTwo,newTwo);
-				win(playerOne, playerTwo,tie);
+				RoundWin(playerOne, playerTwo,tie);
 			}
 		}
 	}
-	cout<<"salio de tie"<<endl;
-	/*
-	while(finish!=true){
-		DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
-		result=IsPossibleTie(playerOne,newOne,playerTwo,newTwo);
-		if(result==0){
-			RoundTie(playerOne,newOne,playerTwo,newTwo,tie);
-			result=IsMajor(GetCard(GetLast(playerOne)),GetCard(GetLast(playerTwo)));
-			if(result==1){
-				win(playerTwo,playerOne,tie);
-				Concatenate(newOne,tie);
-				SetToEmpty(tie);
-				finish=true;
-			}
-			else if(result==-1){
-				win(playerTwo,playerOne,tie);
-				Concatenate(newTwo,tie);
-				SetToEmpty(tie);
-				finish=true;
-			}
-		}
-		else if(result==1){
-			Concatenate(newOne,tie);
-			Finish(playerOne,playerTwo,newTwo);
-			finish=true;
-			cout<<"WIN ONE"<<endl;
-		}
-		else{
-			Concatenate(newTwo,tie);
-			Finish(playerTwo,playerOne,newOne);
-			finish=true;
-			cout<<"WIN TWO"<<endl;
-		}
-	}*/
-	//cout<<"Salio de Tie"<<endl;
 }
 
 void WinRound(int result){
 	if(result==1){
-		//cout<<"Round Win Player One"<<endl;
+		cout<<"Round Win Player One"<<endl;
 	}
 	else if(result==-1){
-		//cout<<"Round Win Player Two"<<endl;
+		cout<<"Round Win Player Two"<<endl;
 	}
 	else{
-		//cout<<" TIE ";
+		cout<<" TIE ";
 	}
 }
 
