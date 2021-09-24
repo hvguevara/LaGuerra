@@ -18,6 +18,7 @@ const int topeTruco=40;
 struct TypeSpanishDeck::SpanishDeck{
 	Node* cards[topeDeck];
 	int countCard;
+	const int maxCount=topeDeck;
 };
 
 SpanishDeck* TypeSpanishDeck::CreateEmpty(){
@@ -78,8 +79,10 @@ Node* TypeSpanishDeck::GetNode(SpanishDeck* deck, int position){
 }
 
 void TypeSpanishDeck::Add(SpanishDeck* deck, Node* newCard){
-	deck->cards[deck->countCard]=newCard;//new Card(Copy(newCard->GetSuit()),newCard->GetValue());
-	deck->countCard++;
+	if(deck->countCard<deck->maxCount){
+		deck->cards[deck->countCard]=newCard;
+		deck->countCard++;
+	}
 }
 
 void TypeSpanishDeck::Remove(SpanishDeck* deck, Node* removeCard){
@@ -145,7 +148,9 @@ bool TypeSpanishDeck::TypeCheck::NotRepeatCard(SpanishDeck* deck){
 }
 
 void TypeSpanishDeck::TypeCheck::RepeatCard(SpanishDeck* deck,int origin, int destiny){
-	deck->cards[destiny]=deck->cards[origin];
+	if(origin<deck->maxCount and destiny<deck->maxCount){
+		deck->cards[destiny]=deck->cards[origin];
+	}
 }
 
 

@@ -319,6 +319,7 @@ void RoundTie(List* playerOne, List* newOne, List* playerTwo, List* newTwo,List*
 	DecideResetDeck(playerOne,newOne,playerTwo,newTwo);
 	cout<<"Cartas salteada ---> ";
 	ViewRound(playerOne,newOne,playerTwo,newTwo);
+	system("PAUSE");
 	RoundWin(playerTwo,playerOne,tie);
 }
 
